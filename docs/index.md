@@ -61,17 +61,19 @@ sharing a single [Spoolman](components/spoolman-nfc.md) instance.
 
 -   :material-source-branch: **Workflows**
 
-    End-to-end sequence diagrams: NFC spool selection, the J1S upload
-    pipeline, a Voron toolchange, bringing up a new printer.
+    What the operator does, plus end-to-end sequence diagrams: NFC
+    spool selection, the J1S upload pipeline, a Voron toolchange,
+    bringing up a new printer.
 
-    [:octicons-arrow-right-24: NFC spool selection](workflows/nfc-spool.md)
+    [:octicons-arrow-right-24: How the user works with the fleet](workflows/operator-workflow.md)
 
 -   :material-tools: **How-to guides**
 
-    Concrete recipes — flash an RP2040, build the Pi image, install the
-    NFC daemon, add a toolhead.
+    Concrete recipes — manage spool inventory, write and re-use NFC
+    tags, flash an RP2040, build the Pi image, install the NFC daemon,
+    add a toolhead.
 
-    [:octicons-arrow-right-24: Build the J1S Pi image](how-to/build-j1s-image.md)
+    [:octicons-arrow-right-24: Manage spool inventory](how-to/manage-spool-inventory.md)
 
 -   :material-book-open-variant: **Reference**
 

@@ -102,11 +102,14 @@ nav:
           - CR-30 (Klipper mod): components/cr30.md
           - Elyarchi Alcheman: components/alcheman.md
   - Workflows:
+      - How the user works with the fleet: workflows/operator-workflow.md
       - NFC spool selection: workflows/nfc-spool.md
       - Print upload (J1S): workflows/j1s-upload.md
       - Toolchange (StealthChanger): workflows/toolchange.md
       - Bring-up of a new printer: workflows/new-printer.md
   - How-to:
+      - Manage spool inventory in Spoolman: how-to/manage-spool-inventory.md
+      - Manage NFC tags: how-to/manage-nfc-tags.md
       - Build the J1S Pi image: how-to/build-j1s-image.md
       - Install klipper-nfc-daemon: how-to/install-nfc-daemon.md
       - Run Spoolman with NFC: how-to/run-spoolman-nfc.md
