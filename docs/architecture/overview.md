@@ -14,19 +14,27 @@ flowchart LR
         Phone["Phone<br/>(Mainsail PWA)"]
     end
 
-    subgraph Klipper["🖨️ Klipper printers"]
+    subgraph Klipper["🖨️ Klipper printers (each host runs its own klipper-nfc-daemon)"]
         V24["Voron 2.4 — StealthChanger<br/>Recore A7 · 5 toolheads (RP2040)"]
         Trident["Voron Trident 300<br/>Recore A8"]
         V0["Voron V0<br/>Recore A6"]
-        CR30["CR-30 (Klipper mod)"]
-        Alcheman["Elyarchi Alcheman"]
+        CR30["CR-30 (Klipper mod)<br/>Recore A8"]
+        Alcheman["Elyarchi Alcheman<br/>(vendor controller)"]
+        NFCDaemonK["klipper-nfc-daemon<br/>(per host)"]
+        V24    --- NFCDaemonK
+        Trident --- NFCDaemonK
+        V0      --- NFCDaemonK
+        CR30    --- NFCDaemonK
+        Alcheman --- NFCDaemonK
     end
 
     subgraph J1S["🖨️ Snapmaker J1S"]
         Pi["Raspberry Pi<br/>(custom image)"]
         Bridge["snapmaker_moonraker<br/>(Go bridge)"]
+        NFCDaemonJ["klipper-nfc-daemon<br/>(on the Pi)"]
         J1SFw["J1S stock firmware<br/>(SACP)"]
         Pi --> Bridge --> J1SFw
+        Pi --- NFCDaemonJ
     end
 
     subgraph Readers["📇 PN532 readers (one per printer, USB-UART)"]
@@ -47,13 +55,11 @@ flowchart LR
     Mainsail -->|"Moonraker<br/>JSON-RPC"| Alcheman
     Mainsail -->|"Moonraker<br/>JSON-RPC"| Bridge
 
-    Readers -.->|USB-UART| V24
-    Readers -.->|USB-UART| Trident
-    Readers -.->|USB-UART| V0
-    Readers -.->|USB-UART| CR30
-    Readers -.->|USB-UART| Alcheman
-    Readers -.->|USB-UART| Pi
+    Readers -.->|USB-UART| NFCDaemonK
+    Readers -.->|USB-UART| NFCDaemonJ
 
+    NFCDaemonK -->|REST| Spoolman
+    NFCDaemonJ -->|REST| Spoolman
     V24 -->|REST| Spoolman
     Trident -->|REST| Spoolman
     V0 -->|REST| Spoolman
@@ -65,16 +71,23 @@ flowchart LR
     classDef custom fill:#a29bfe,stroke:#6c5ce7,color:#fff
     classDef vanilla fill:#dfe6e9,stroke:#b2bec3,color:#000
 
-    class Bridge,Spoolman fork
-    class Bridge custom
-    class V24,Trident,V0,CR30,Alcheman,J1SFw,Pi,Mainsail vanilla
+    class Spoolman fork
+    class Bridge,NFCDaemonK,NFCDaemonJ custom
+    class V24,Trident,V0,CR30,Alcheman,J1SFw,Pi,Mainsail,R1 vanilla
 ```
 
-Legend:
+<div markdown>
+**Legend**
 
-- :material-square: **Vanilla** — upstream, unmodified
-- :material-square: **Fork** — patched, see [Repo map](repo-map.md)
-- :material-square: **Custom** — written from scratch in this stack
+<span style="display:inline-block;width:14px;height:14px;background:#dfe6e9;border:1px solid #b2bec3;vertical-align:middle;margin-right:6px"></span>
+**Vanilla** — upstream, unmodified
+
+<span style="display:inline-block;width:14px;height:14px;background:#ffeaa7;border:1px solid #fdcb6e;vertical-align:middle;margin-right:6px"></span>
+**Fork** — patched, see [Repo map](repo-map.md)
+
+<span style="display:inline-block;width:14px;height:14px;background:#a29bfe;border:1px solid #6c5ce7;vertical-align:middle;margin-right:6px"></span>
+**Custom** — written from scratch in this stack
+</div>
 
 ## The fleet, side by side
 
