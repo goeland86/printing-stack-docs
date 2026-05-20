@@ -33,47 +33,66 @@ this site doesn't try to re-document it.
 ## Where NFC metadata enters
 
 Both pre- and post-change hooks read from `save_variables` so per-tool
-filament settings travel with the toolchange.
+filament settings travel with the toolchange. The fleet's canonical PA
+applier (`NFC_APPLY_PA` + `_PA_DEFAULTS`) is documented verbatim in
+[save_variables → reading from macros](../reference/save-variables.md#reading-from-macros).
 
-!!! info "The snippets below are examples"
-    They illustrate the **pattern**, not a drop-in macro. Real macros
-    in this fleet have additional concerns (homing checks, extruder
-    naming conventions, slicer hand-off, error recovery) that aren't
-    shown here. Adapt to your own `printer.cfg`.
+For a toolchanger the same priority logic (spool-specific PA →
+per-material fallback → universal default) applies once per tool. The
+shape below extends `NFC_APPLY_PA` to per-tool keys — verify your
+extruder naming (`extruder` / `extruder1` / …) matches your config
+before using:
+
+!!! info "Adapt to your config"
+    The skeleton below uses the same three-tier priority as the
+    single-tool `NFC_APPLY_PA`. Pull the per-material defaults from
+    `_PA_DEFAULTS` (see [reference](../reference/save-variables.md#reading-from-macros)),
+    swap the `nfc_*` reads for `nfc_t{N}_*`, and pass `EXTRUDER=…` to
+    `SET_PRESSURE_ADVANCE`. Real macros also need homing checks, error
+    paths, and slicer hand-off that aren't shown.
 
 ```ini
-[gcode_macro POST_TOOL_CHANGE]
-description: Apply NFC-loaded per-tool filament settings after a swap
+[gcode_macro NFC_APPLY_PA_TOOL]
+description: Apply per-tool PA from NFC scan with material fallback
 gcode:
-    {% set t = printer.toolhead.extruder|replace("extruder","")|default("0") %}
-    {% set t = (t or "0")|int %}
+    {% set t = params.T|int %}
     {% set svv = printer.save_variables.variables %}
+    {% set pa_stored = svv["nfc_t" + t|string + "_pressure_advance"] | default(-1.0) | float %}
+    {% set material  = svv["nfc_t" + t|string + "_material"] | default("") | string | upper %}
+    {% set defaults  = printer["gcode_macro _PA_DEFAULTS"] %}
+    {% set extruder  = "extruder" if t == 0 else "extruder" + t|string %}
 
-    {% set pa = svv["nfc_t" + t|string + "_pressure_advance"]|default(0.04)|float %}
-    SET_PRESSURE_ADVANCE EXTRUDER={printer.toolhead.extruder} ADVANCE={pa}
-
-    {% set t_target = svv["nfc_t" + t|string + "_extruder_temp"]|default(0)|int %}
-    {% if t_target > 0 %}
-        M104 S{t_target} T{t}    ; non-blocking
+    {% if pa_stored > 0 %}
+        SET_PRESSURE_ADVANCE EXTRUDER={extruder} ADVANCE={pa_stored}
+    {% else %}
+        {% if   material == "PLA"                    %} {% set pa_fb = defaults.pla      %}
+        {% elif material == "PETG"                   %} {% set pa_fb = defaults.petg     %}
+        {% elif material in ["ASA", "ABS"]           %} {% set pa_fb = defaults.asa      %}
+        {% elif material == "TPU"                    %} {% set pa_fb = defaults.tpu      %}
+        {% elif material == "PC"                     %} {% set pa_fb = defaults.pc       %}
+        {% elif material in ["PA", "NYLON", "PA-CF"] %} {% set pa_fb = defaults.pa_nylon %}
+        {% else                                      %} {% set pa_fb = defaults.default  %}
+        {% endif %}
+        SET_PRESSURE_ADVANCE EXTRUDER={extruder} ADVANCE={pa_fb}
     {% endif %}
 ```
 
-The print-start macro does the same at the top, ahead of the first
-extrusion, so every tool starts with the right temp/PA:
+Then call it from the toolchange and print-start hooks:
 
 ```ini
+[gcode_macro POST_TOOL_CHANGE]
+gcode:
+    {% set t = printer.toolhead.extruder|replace("extruder","")|default("0") %}
+    {% set t = (t or "0")|int %}
+    NFC_APPLY_PA_TOOL T={t}
+
 [gcode_macro PRINT_START]
 gcode:
-    {% set svv = printer.save_variables.variables %}
+    # …homing, levelling, heat soak…
     {% for t in range(5) %}
-        {% set pa = svv["nfc_t" + t|string + "_pressure_advance"]|default(0.04)|float %}
-        {% if t == 0 %}
-            SET_PRESSURE_ADVANCE EXTRUDER=extruder ADVANCE={pa}
-        {% else %}
-            SET_PRESSURE_ADVANCE EXTRUDER=extruder{{ t }} ADVANCE={pa}
-        {% endif %}
+        NFC_APPLY_PA_TOOL T={t}
     {% endfor %}
-    # …rest of start sequence
+    # …prime line, first layer…
 ```
 
 ## What can go wrong, and where the NFC stack helps

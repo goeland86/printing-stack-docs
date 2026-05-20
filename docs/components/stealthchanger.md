@@ -71,21 +71,26 @@ flowchart TB
 
 ## Pressure advance per filament
 
-When a spool is scanned, the NFC daemon writes the spool's
-`pressure_advance` from Spoolman into `nfc_t{N}_pressure_advance`. The
-print-start macro applies it — for the actual macro pattern used in
-this fleet see [save_variables → reading from macros](../reference/save-variables.md#reading-from-macros).
+When a spool is scanned, the NFC daemon writes the spool's tuned
+pressure advance from Spoolman into `nfc_t{N}_pressure_advance` (one
+key per tool). The fleet's canonical PA-apply macros — `_PA_DEFAULTS`
+(data macro of per-material fallbacks) and `NFC_APPLY_PA`
+(three-tier-priority applier) — are documented verbatim at
+[save_variables → reading from macros](../reference/save-variables.md#reading-from-macros).
+That page shows the single-tool form running on the
+[Trident](voron-trident.md); on the StealthChanger Voron the same
+shape extends to per-tool variants:
 
-!!! note "Macro snippets in these docs are illustrative"
-    Print-start / toolchange snippets shown across this site are
-    **examples**, not ready-to-run macros. Adapt them to your
-    printer's configuration (extruder names, tool count, slicer's
-    start gcode contract, etc.) before pasting into `printer.cfg`.
+- Call `NFC_APPLY_PA` (or a `_T{N}` variant) once per tool inside the
+  toolchanger's `POST_TOOL_CHANGE` hook so the picked-up tool's PA is
+  set immediately after a swap.
+- Seed every tool at the top of `PRINT_START` so first-layer extrusion
+  on the initial tool gets the right value.
 
 Spoolman's per-spool nozzle-specific pressure-advance extra (e.g.
-`nozzle_0_4_pressure_advance`) stores the value; the daemon copies it
-to `save_variables` on every scan so a freshly tuned PA in Spoolman
-propagates the moment that spool is loaded.
+`nozzle_0_4_pressure_advance`) stores the tuned value; the daemon
+copies it to `save_variables` on every scan so a freshly tuned PA in
+Spoolman propagates the moment that spool is loaded.
 
 ## Host: Recore A7
 

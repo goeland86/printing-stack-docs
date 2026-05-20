@@ -100,28 +100,16 @@ full schema.
 
 ## How it integrates with macros
 
-!!! info "Illustrative — not ready-to-run"
-    The snippet below shows the **shape** of a print-start macro that
-    consumes the daemon's `save_variables`. It is not the actual macro
-    used by any printer in this fleet. Adapt it to your slicer's start
-    gcode contract, your extruder naming, your homing/leveling
-    sequence, etc.
+The fleet's canonical PA-apply macros (`_PA_DEFAULTS` data macro +
+`NFC_APPLY_PA` three-tier-priority applier) live in
+[save_variables → reading from macros](../reference/save-variables.md#reading-from-macros).
+Drop those into `printer.cfg`, call `NFC_APPLY_PA` from `PRINT_START`,
+and the daemon's writes Just Work.
 
-```ini
-[gcode_macro PRINT_START]
-gcode:
-    {% set svv = printer.save_variables.variables %}
-    {% set extruder = svv.nfc_t0_extruder_temp|default(200)|int %}
-    {% set bed = svv.nfc_t0_bed_temp|default(60)|int %}
-    M140 S{bed}
-    M109 S{extruder}
-    M190 S{bed}
-    SET_PRESSURE_ADVANCE EXTRUDER=extruder ADVANCE={svv.nfc_t0_pressure_advance|default(0.04)}
-```
-
-The shape works on the J1S (talking to the bridge's emulated
-`printer.save_variables` object) and on any Klipper printer (talking
-to real `[save_variables]`).
+The same `printer.save_variables.variables.<name>` access pattern
+works on the J1S (talking to the bridge's emulated `save_variables`
+object) and on every Klipper printer (talking to real
+`[save_variables]`).
 
 ## Mainsail preheat preset
 
