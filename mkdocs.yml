@@ -1,0 +1,119 @@
+site_name: 3D Printing Stack
+site_description: Documentation for the goeland86 3D printing fleet — StealthChanger Voron, Snapmaker J1S bridge, NFC spool management, and the glue that ties them together.
+site_url: https://goeland86.github.io/printing-stack-docs/
+site_author: goeland86
+repo_url: https://github.com/goeland86/printing-stack-docs
+repo_name: goeland86/printing-stack-docs
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 goeland86 — MIT License
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.action.edit
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+
+plugins:
+  - search
+  - tags
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - Architecture:
+      - Fleet overview: architecture/overview.md
+      - Data flow: architecture/data-flow.md
+      - Repo map: architecture/repo-map.md
+  - Components:
+      - snapmaker_moonraker bridge: components/snapmaker-bridge.md
+      - klipper-nfc-daemon: components/nfc-daemon.md
+      - Spoolman fork (NFC): components/spoolman-nfc.md
+      - StealthChanger toolheads: components/stealthchanger.md
+      - Klipper + Moonraker + Mainsail: components/klipper-stack.md
+  - Workflows:
+      - NFC spool selection: workflows/nfc-spool.md
+      - Print upload (J1S): workflows/j1s-upload.md
+      - Toolchange (StealthChanger): workflows/toolchange.md
+      - Bring-up of a new printer: workflows/new-printer.md
+  - How-to:
+      - Build the J1S Pi image: how-to/build-j1s-image.md
+      - Install klipper-nfc-daemon: how-to/install-nfc-daemon.md
+      - Run Spoolman with NFC: how-to/run-spoolman-nfc.md
+      - Flash RP2040 toolheads: how-to/flash-rp2040.md
+      - Add a toolhead to StealthChanger: how-to/add-toolhead.md
+  - Reference:
+      - NFC tag formats: reference/nfc-tag-formats.md
+      - Bridge intercepts: reference/bridge-intercepts.md
+      - save_variables keys: reference/save-variables.md
+      - Hardware bill of materials: reference/hardware-bom.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/goeland86
+  generator: false
