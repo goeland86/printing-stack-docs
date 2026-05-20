@@ -93,8 +93,14 @@ nav:
       - snapmaker_moonraker bridge: components/snapmaker-bridge.md
       - klipper-nfc-daemon: components/nfc-daemon.md
       - Spoolman fork (NFC): components/spoolman-nfc.md
-      - StealthChanger toolheads: components/stealthchanger.md
       - Klipper + Moonraker + Mainsail: components/klipper-stack.md
+      - Recore (A6/A7/A8): components/recore.md
+      - Printers:
+          - Voron 2.4 — StealthChanger: components/stealthchanger.md
+          - Voron Trident 300: components/voron-trident.md
+          - Voron V0: components/voron-v0.md
+          - CR-30 (Klipper mod): components/cr30.md
+          - Elyarchi Alcheman: components/alcheman.md
   - Workflows:
       - NFC spool selection: workflows/nfc-spool.md
       - Print upload (J1S): workflows/j1s-upload.md

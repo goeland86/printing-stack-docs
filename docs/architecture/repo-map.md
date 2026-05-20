@@ -22,13 +22,13 @@ the upstream or a fork.
 
 | Repo | Used by | What we use it for |
 |------|---------|--------------------|
-| [**Klipper3d/klipper**](https://github.com/Klipper3d/klipper) | Voron 2.4 | Motion control firmware on MCU + host-side macros. |
-| [**Arksine/moonraker**](https://github.com/Arksine/moonraker) | Voron 2.4 | JSON-RPC + websocket API in front of Klipper. |
-| [**viesturz/klipper-toolchanger**](https://github.com/viesturz/klipper-toolchanger) | Voron 2.4 | The toolchanger plugin that makes StealthChanger possible. Vanilla — we haven't patched it. |
-| [**mainsail-crew/mainsail**](https://github.com/mainsail-crew/mainsail) | Both printers | Web UI. Latest release shipped on the J1S Pi image; symlinked under `~/printer_data/config` on the Voron host. |
-| [**fluidd-core/fluidd**](https://github.com/fluidd-core/fluidd) | Either | Alternative web UI; not currently installed but works against both hosts. |
+| [**Klipper3d/klipper**](https://github.com/Klipper3d/klipper) | Every Klipper printer in the fleet | Motion control firmware on MCU + host-side macros. |
+| [**Arksine/moonraker**](https://github.com/Arksine/moonraker) | Every Klipper printer | JSON-RPC + websocket API in front of Klipper. |
+| [**viesturz/klipper-toolchanger**](https://github.com/viesturz/klipper-toolchanger) | Voron 2.4 (StealthChanger) only | The toolchanger plugin that makes StealthChanger possible. Vanilla — we haven't patched it. |
+| [**mainsail-crew/mainsail**](https://github.com/mainsail-crew/mainsail) | Every printer | Web UI. Latest release on the J1S Pi image and on every Klipper host. |
+| [**fluidd-core/fluidd**](https://github.com/fluidd-core/fluidd) | Optional | Alternative web UI; works against any host in the fleet. |
 | [**mainsail-crew/crowsnest**](https://github.com/mainsail-crew/crowsnest) | J1S Pi image | Webcam streaming. |
-| [**KlipperScreen/KlipperScreen**](https://github.com/KlipperScreen/KlipperScreen) | Voron 2.4 (optional) | Touchscreen UI; the NFC daemon's prompt dialogs render in KlipperScreen too. |
+| [**KlipperScreen/KlipperScreen**](https://github.com/KlipperScreen/KlipperScreen) | Voron hosts (optional) | Touchscreen UI; the NFC daemon's prompt dialogs render in KlipperScreen too. |
 
 ## Dependency graph
 

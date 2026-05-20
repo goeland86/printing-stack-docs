@@ -8,13 +8,45 @@ deliberately).
 
 | Component | Make / Model | Notes |
 |-----------|--------------|-------|
-| **Printer frame** | Voron 2.4 (standard build, scaled per personal choice) | Standard Voron BOM applies — see [vorondesign.com](https://vorondesign.com) |
-| **Host SBC** | Recore A7 | Cortex-A7 Linux board with onboard stepper drivers; Klipper runs natively |
+| **Printer frame** | Voron 2.4 | Standard Voron BOM applies — see [vorondesign.com](https://vorondesign.com) |
+| **Host** | [Recore A7](../components/recore.md) | Linux SBC with onboard stepper drivers; see [iAgent wiki](https://www.iagent.no) |
 | **Toolchanger plates / docks** | StealthChanger | Open-source design — see [CalKraken/StealthChanger](https://github.com/CalKraken/StealthChanger) |
 | **Toolheads** | 5 × StealthChanger toolheads | Each carries its own hotend, extruder, fans |
 | **Toolboards** | 5 × RP2040-based | Same firmware build across all 5 (avoids hub enumeration drift — see [Flashing guide](../how-to/flash-rp2040.md)) |
 | **USB hub** | VIA Labs | Has the enumeration quirk noted in the flashing how-to |
-| **NFC reader** | PN532 (USB-UART bridge) | Shared across all 5 tools — operator scans spools at a single station |
+| **NFC reader** | PN532 on USB-UART | Shared across all 5 tools — operator scans spools at a single station |
+
+## Voron Trident 300
+
+| Component | Make / Model | Notes |
+|-----------|--------------|-------|
+| **Printer frame** | Voron Trident 300 | Standard Voron BOM |
+| **Host** | [Recore A8](../components/recore.md) | Linux SBC with onboard stepper drivers; see [iAgent wiki](https://www.iagent.no) |
+| **NFC reader** | PN532 on USB-UART | Single-tool, single reader |
+
+## Voron V0
+
+| Component | Make / Model | Notes |
+|-----------|--------------|-------|
+| **Printer frame** | Voron V0 | Standard Voron BOM |
+| **Host** | [Recore A6](../components/recore.md) | Linux SBC with onboard stepper drivers; see [iAgent wiki](https://www.iagent.no) |
+| **NFC reader** | PN532 on USB-UART | External reader (limited internal volume on V0) |
+
+## CR-30 (Klipper modded)
+
+| Component | Make / Model | Notes |
+|-----------|--------------|-------|
+| **Base printer** | Creality CR-30 ("PrintMill") | Belt printer, converted to Klipper |
+| **Klipper controller** | Operator's choice of MCU | Any Klipper-supported board |
+| **NFC reader** | PN532 on USB-UART | Single reader |
+
+## Elyarchi Alcheman
+
+| Component | Make / Model | Notes |
+|-----------|--------------|-------|
+| **Printer** | Elyarchi Alcheman | Stock chassis, running upstream Klipper |
+| **Klipper controller** | Per Elyarchi spec | Operator-managed |
+| **NFC reader** | PN532 on USB-UART | Single reader |
 
 ## Snapmaker J1S
 
@@ -23,7 +55,7 @@ deliberately).
 | **Printer** | Snapmaker J1S | Stock, unmodified firmware |
 | **Host SBC** | Raspberry Pi 3 | 921 MB RAM — Pi 4 also works |
 | **SD card** | ≥ 8 GB Class 10 | Image build is ~3 GB |
-| **NFC reader** | PN532 (USB-UART bridge) | Plugged into the Pi |
+| **NFC reader** | PN532 on USB-UART | Pre-installed on the [J1S Pi image](../how-to/build-j1s-image.md) |
 
 ## Shared infrastructure
 
@@ -69,23 +101,13 @@ VCC (3.3V / 5V)     3.3V (most boards) or 5V (check breakout's regulator)
 DIP switches on the PN532: set to **UART** (typically `00`). Some
 boards have solder jumpers instead — same idea.
 
-### PN5180 to Pi (SPI)
+### PN5180 (SPI)
 
-```
-PN5180        Pi (BCM)
-SCK     →     GPIO 11 (SCLK)
-MOSI    →     GPIO 10 (MOSI)
-MISO    ←     GPIO 9  (MISO)
-NSS     →     GPIO 8  (CE0)
-BUSY    ←     GPIO 25 (configurable)
-RST     →     GPIO 24 (configurable)
-5V             5V (antenna)
-3V3            3V3 (logic)
-GND            GND
-```
-
-Configure `pn5180_busy_pin` and `pn5180_reset_pin` in
-`nfc_spoolman.cfg` to match whatever GPIOs you used.
+Wiring varies per controller (Pi GPIO header, Klipper MCU SPI, etc.)
+and per PN5180 breakout. Refer to your **controller's documentation**
+and your **PN5180 reader's documentation** for the correct pin
+assignments, then plug those GPIO numbers into `pn5180_busy_pin` and
+`pn5180_reset_pin` in `nfc_spoolman.cfg`.
 
 ### ACR1552U
 

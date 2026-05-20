@@ -16,10 +16,18 @@ start with [Architecture → Fleet overview](architecture/overview.md).
 
 ## The fleet
 
-| Printer | Role | Host | Firmware | Frontend |
-|---------|------|------|----------|----------|
-| **Voron 2.4 (StealthChanger)** | Multi-material production | Recore A7 (Linux) | Klipper + [`klipper-toolchanger`](https://github.com/viesturz/klipper-toolchanger) | Mainsail |
-| **Snapmaker J1S** | Secondary / experimentation | RPi 3 (image) | Snapmaker stock | Mainsail via [`snapmaker_moonraker`](https://github.com/goeland86/snapmaker_moonraker) bridge |
+| Printer | Host | Firmware | Notes |
+|---------|------|----------|-------|
+| **Voron 2.4 (StealthChanger)** | [Recore A7](components/recore.md) | Klipper + [`klipper-toolchanger`](https://github.com/viesturz/klipper-toolchanger) | 5 toolheads on RP2040 toolboards |
+| **Voron Trident 300** | [Recore A8](components/recore.md) | Klipper | Single-tool, NFC-equipped |
+| **Voron V0** | [Recore A6](components/recore.md) | Klipper | Small single-tool, NFC-equipped |
+| **CR-30 (Klipper modded)** | (operator's host of choice) | Klipper | Belt printer, NFC-equipped |
+| **Elyarchi Alcheman** | (operator's host of choice) | Klipper | NFC-equipped |
+| **Snapmaker J1S** | RPi 3 (custom image) | Snapmaker stock + [`snapmaker_moonraker`](https://github.com/goeland86/snapmaker_moonraker) bridge | Closed firmware, bridged to Mainsail |
+
+Every printer in the fleet runs a [PN532 NFC reader on a USB-UART
+cable](how-to/install-nfc-daemon.md) and the [klipper-nfc-daemon](components/nfc-daemon.md),
+sharing a single [Spoolman](components/spoolman-nfc.md) instance.
 
 ## What's documented here
 

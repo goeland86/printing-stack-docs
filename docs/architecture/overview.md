@@ -1,10 +1,9 @@
 # Fleet overview
 
-The fleet is two printers with very different firmwares pretending to
-be the same printer from the operator's perspective. The shared layer
-is everything above the printer's TCP socket: Mainsail UI, NFC spool
-selection, Spoolman tracking, and consistent `save_variables` for
-print-start macros.
+A mix of Klipper printers and one Snapmaker J1S pretending to be one
+from the operator's perspective. The shared layer is everything above
+the printer's TCP socket: Mainsail UI, NFC spool selection, Spoolman
+tracking, and consistent `save_variables` for print-start macros.
 
 ## Block diagram
 
@@ -13,14 +12,14 @@ flowchart LR
     subgraph Operator["👤 Operator"]
         Browser["Browser<br/>(Mainsail / Fluidd)"]
         Phone["Phone<br/>(Mainsail PWA)"]
-        NFCReader["📇 NFC reader<br/>(per-printer PN532)"]
     end
 
-    subgraph Voron["🖨️ Voron 2.4 — StealthChanger"]
-        Recore["Recore A7<br/>Linux host"]
-        Klipper["Klipper + klipper-toolchanger"]
-        T0["T0…T4<br/>RP2040 toolboards"]
-        Recore --> Klipper --> T0
+    subgraph Klipper["🖨️ Klipper printers"]
+        V24["Voron 2.4 — StealthChanger<br/>Recore A7 · 5 toolheads (RP2040)"]
+        Trident["Voron Trident 300<br/>Recore A8"]
+        V0["Voron V0<br/>Recore A6"]
+        CR30["CR-30 (Klipper mod)"]
+        Alcheman["Elyarchi Alcheman"]
     end
 
     subgraph J1S["🖨️ Snapmaker J1S"]
@@ -30,6 +29,10 @@ flowchart LR
         Pi --> Bridge --> J1SFw
     end
 
+    subgraph Readers["📇 PN532 readers (one per printer, USB-UART)"]
+        R1[reader]
+    end
+
     subgraph Shared["🌐 Shared services"]
         Spoolman["Spoolman<br/>(goeland86/Spoolman<br/>pr/nfc-support)"]
         Mainsail["Mainsail / Fluidd<br/>(static, served per host)"]
@@ -37,13 +40,25 @@ flowchart LR
 
     Browser --> Mainsail
     Phone --> Mainsail
-    Mainsail -->|"Moonraker<br/>JSON-RPC"| Recore
+    Mainsail -->|"Moonraker<br/>JSON-RPC"| V24
+    Mainsail -->|"Moonraker<br/>JSON-RPC"| Trident
+    Mainsail -->|"Moonraker<br/>JSON-RPC"| V0
+    Mainsail -->|"Moonraker<br/>JSON-RPC"| CR30
+    Mainsail -->|"Moonraker<br/>JSON-RPC"| Alcheman
     Mainsail -->|"Moonraker<br/>JSON-RPC"| Bridge
 
-    NFCReader -.->|USB-UART| Recore
-    NFCReader -.->|USB-UART| Pi
+    Readers -.->|USB-UART| V24
+    Readers -.->|USB-UART| Trident
+    Readers -.->|USB-UART| V0
+    Readers -.->|USB-UART| CR30
+    Readers -.->|USB-UART| Alcheman
+    Readers -.->|USB-UART| Pi
 
-    Recore -->|REST| Spoolman
+    V24 -->|REST| Spoolman
+    Trident -->|REST| Spoolman
+    V0 -->|REST| Spoolman
+    CR30 -->|REST| Spoolman
+    Alcheman -->|REST| Spoolman
     Bridge -->|REST| Spoolman
 
     classDef fork fill:#ffeaa7,stroke:#fdcb6e,color:#000
@@ -52,7 +67,7 @@ flowchart LR
 
     class Bridge,Spoolman fork
     class Bridge custom
-    class Klipper,J1SFw,Recore,Pi,T0,Mainsail vanilla
+    class V24,Trident,V0,CR30,Alcheman,J1SFw,Pi,Mainsail vanilla
 ```
 
 Legend:
@@ -61,31 +76,30 @@ Legend:
 - :material-square: **Fork** — patched, see [Repo map](repo-map.md)
 - :material-square: **Custom** — written from scratch in this stack
 
-## The two printers, side by side
+## The fleet, side by side
 
-| Aspect | Voron 2.4 (StealthChanger) | Snapmaker J1S |
-|--------|----------------------------|---------------|
+| Aspect | Klipper printers (Voron 2.4 / Trident / V0 / CR-30 / Alcheman) | Snapmaker J1S |
+|--------|----------------------------------------------------------------|---------------|
 | **Firmware** | Klipper (upstream) | Snapmaker stock — proprietary, SACP over TCP |
-| **Host OS** | Linux on Recore A7 | Raspberry Pi OS Lite (Bookworm 32-bit) on Pi 3 |
-| **Klipper-side API** | Real Moonraker | `snapmaker_moonraker` bridge (Go) on :7125 |
-| **Toolheads** | 5 × StealthChanger ([viesturz/klipper-toolchanger](https://github.com/viesturz/klipper-toolchanger)) | 2 × built-in extruders |
-| **Toolboards** | RP2040 (Kalico-style) | N/A — closed firmware |
-| **Macros / `[respond]`** | Native (real Klipper) | Emulated by bridge intercepts |
-| **`save_variables`** | Native (real Klipper) | Emulated by bridge against its persistent DB |
-| **`SAVE_VARIABLE` / `SET_GCODE_VARIABLE` / `RESPOND TYPE=command MSG="action:prompt_*"`** | Native | [Intercepted by bridge](../reference/bridge-intercepts.md) |
+| **Host** | Recore A6/A7/A8 (Vorons) or operator's host of choice (CR-30, Alcheman) | Raspberry Pi 3 with the [custom image](../how-to/build-j1s-image.md) |
+| **Klipper-side API** | Real Moonraker | [`snapmaker_moonraker`](../components/snapmaker-bridge.md) bridge (Go) on :7125 |
+| **Toolheads** | 5 (Voron 2.4 / StealthChanger) or 1 (all others) | 2 × built-in extruders |
+| **Macros / `[respond]` / `[save_variables]`** | Native (real Klipper) | [Intercepted by bridge](../reference/bridge-intercepts.md) |
 | **Mainsail prompt dialogs** | Yes (real `notify_gcode_response`) | Yes (broadcast by bridge from intercepted RESPOND) |
+| **NFC reader** | PN532 on USB-UART (one per printer) | PN532 on USB-UART (built into image) |
 
 The point of the bridge is that **from Mainsail's perspective there is no
-difference**. The same macros, the same `save_variables` queries, the same
-prompt dialogs work. That's what makes the cross-printer NFC daemon
-possible.
+difference between the J1S and any Klipper printer**. The same macros,
+the same `save_variables` queries, the same prompt dialogs work. That's
+what makes a single fleet-wide NFC daemon possible.
 
 ## Where the NFC stack plugs in
 
-Both printers run an identical `klipper-nfc-daemon` instance. The daemon
-doesn't know or care whether it's talking to real Klipper or the bridge —
-it speaks Moonraker JSON-RPC + emits Klipper macros, and the underlying
-host (real Klipper or bridge) does the right thing.
+Every printer in the fleet runs an identical `klipper-nfc-daemon`
+instance. The daemon doesn't know or care whether it's talking to real
+Klipper or the bridge — it speaks Moonraker JSON-RPC + emits Klipper
+macros, and the underlying host (real Klipper or bridge) does the right
+thing.
 
 ```mermaid
 flowchart LR

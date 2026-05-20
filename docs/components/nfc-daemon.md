@@ -100,6 +100,13 @@ full schema.
 
 ## How it integrates with macros
 
+!!! info "Illustrative — not ready-to-run"
+    The snippet below shows the **shape** of a print-start macro that
+    consumes the daemon's `save_variables`. It is not the actual macro
+    used by any printer in this fleet. Adapt it to your slicer's start
+    gcode contract, your extruder naming, your homing/leveling
+    sequence, etc.
+
 ```ini
 [gcode_macro PRINT_START]
 gcode:
@@ -112,9 +119,9 @@ gcode:
     SET_PRESSURE_ADVANCE EXTRUDER=extruder ADVANCE={svv.nfc_t0_pressure_advance|default(0.04)}
 ```
 
-The same macro works on the J1S (talking to the bridge's emulated
-`printer.save_variables` object) and on the Voron (talking to real
-Klipper's `[save_variables]`).
+The shape works on the J1S (talking to the bridge's emulated
+`printer.save_variables` object) and on any Klipper printer (talking
+to real `[save_variables]`).
 
 ## Mainsail preheat preset
 

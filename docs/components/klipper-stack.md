@@ -6,17 +6,18 @@ project's own docs.
 
 | Project | Version we run | Notes |
 |---------|----------------|-------|
-| [**Klipper**](https://github.com/Klipper3d/klipper) | upstream `master` | Voron 2.4 only. J1S has its own firmware. |
-| [**Moonraker**](https://github.com/Arksine/moonraker) | upstream `master` | Voron 2.4 only. J1S uses the [bridge](snapmaker-bridge.md). |
-| [**Mainsail**](https://github.com/mainsail-crew/mainsail) | upstream latest release | Both printers. |
-| [**Fluidd**](https://github.com/fluidd-core/fluidd) | upstream latest release | Optional alternative UI; works against both hosts. |
-| [**KlipperScreen**](https://github.com/KlipperScreen/KlipperScreen) | upstream `master` | Voron 2.4 only (optional touchscreen). |
+| [**Klipper**](https://github.com/Klipper3d/klipper) | upstream `master` | Every Klipper printer in the fleet (Voron 2.4 / Trident / V0 / CR-30 / Alcheman). J1S has its own firmware. |
+| [**Moonraker**](https://github.com/Arksine/moonraker) | upstream `master` | Every Klipper printer. J1S uses the [bridge](snapmaker-bridge.md). |
+| [**Mainsail**](https://github.com/mainsail-crew/mainsail) | upstream latest release | Every printer (the bridge serves it on the J1S). |
+| [**Fluidd**](https://github.com/fluidd-core/fluidd) | upstream latest release | Optional alternative UI; works against any host in the fleet. |
+| [**KlipperScreen**](https://github.com/KlipperScreen/KlipperScreen) | upstream `master` | Optional touchscreen on Voron hosts. |
 
 ## What our stack relies on
 
 ### Klipper `[respond]`
 
-Required on the Voron host for the NFC daemon to push prompt dialogs:
+Required on every Klipper host in the fleet for the NFC daemon to push
+prompt dialogs:
 
 ```ini
 [respond]
@@ -28,7 +29,8 @@ needed.
 
 ### Klipper `[save_variables]`
 
-Required on the Voron host to persist NFC metadata across reboots:
+Required on every Klipper host in the fleet to persist NFC metadata
+across reboots:
 
 ```ini
 [save_variables]
@@ -40,8 +42,8 @@ config needed on the J1S.
 
 ### Klipper `[gcode_macro NFC_ASSIGN_TOOL]` & `[gcode_macro NFC_CANCEL]`
 
-Defined in `nfc_macros.cfg` shipped with the NFC daemon. Include from
-`printer.cfg`:
+Defined in `nfc_macros.cfg` shipped with the NFC daemon. Required on
+every Klipper host. Include from `printer.cfg`:
 
 ```ini
 [include nfc_macros.cfg]
@@ -52,7 +54,8 @@ J1S.
 
 ### Moonraker `[spoolman]`
 
-Required for the daemon's `POST /server/spoolman/spool_id` to work:
+Required on every Klipper host for the daemon's
+`POST /server/spoolman/spool_id` to work:
 
 ```ini
 [spoolman]
@@ -65,8 +68,8 @@ and reads its Spoolman URL from `config.yaml`.
 
 ## Versioning policy
 
-- **Klipper**: track `master`, pin per known-good commit on the Voron's
-  Klipper checkout. Updates land deliberately, not via cron.
+- **Klipper**: track `master`, pin per known-good commit on each
+  printer's Klipper checkout. Updates land deliberately, not via cron.
 - **Moonraker**: same — track `master`, advance deliberately.
 - **Mainsail / Fluidd**: latest release is fine. The J1S Pi image build
   fetches `mainsail-crew/mainsail` latest at image-build time, so

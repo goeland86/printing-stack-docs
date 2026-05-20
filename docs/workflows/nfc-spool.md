@@ -155,7 +155,11 @@ nothing in Mainsail — they should check `journalctl -u nfc-spoolman -f`.
 
 ## Per-printer reader
 
-Each printer in the fleet has its own NFC reader, each running its own
-`nfc-spoolman` daemon, each pointed at the same shared Spoolman
-instance. That way assignments are always scoped to the printer the
-operator is standing in front of.
+Each printer in the fleet has its own PN532 NFC reader on a USB-UART
+cable, each running its own `nfc-spoolman` daemon, each pointed at the
+same shared Spoolman instance. That way assignments are always scoped
+to the printer the operator is standing in front of.
+
+The Voron 2.4 (StealthChanger) is the only printer running in
+`multi_tool` mode because it's the only multi-tool machine. The
+Trident, V0, CR-30, Alcheman, and J1S all run in `single` mode.

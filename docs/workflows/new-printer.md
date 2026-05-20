@@ -1,8 +1,8 @@
 # Bringing up a new printer
 
-Hooking a new printer into the fleet — whether it's a Voron-like
-Klipper printer or a J1S — so it shares the NFC + Spoolman flow with
-the rest.
+Hooking a new printer into the fleet — Voron, CR-30, Alcheman,
+J1S, anything Klipper-compatible — so it shares the NFC + Spoolman
+flow with the rest.
 
 ## Decision tree
 

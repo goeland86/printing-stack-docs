@@ -121,8 +121,11 @@ Skip this section on the J1S — the bridge has all of this built in.
     ~/nfc-spoolman-env/bin/pip install RPi.GPIO
     ```
 
-    Connect to SPI0 (or your chosen bus) plus two GPIO pins for BUSY
-    and RESET. 5V for the RF antenna, 3.3V for logic.
+    Wiring is controller- and breakout-specific. Refer to your
+    controller's GPIO/SPI documentation and your PN5180 reader's
+    documentation for the correct pin assignments. Then set
+    `pn5180_busy_pin` and `pn5180_reset_pin` in `nfc_spoolman.cfg` to
+    match.
 
 === "ACR1552U (USB)"
 

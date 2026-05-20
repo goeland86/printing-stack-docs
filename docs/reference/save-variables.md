@@ -43,6 +43,12 @@ Up to whatever tool count your printer has (`tools = …` in
 
 ## Reading from macros
 
+!!! info "Example pattern — not a ready-to-run macro"
+    The snippet below shows the **shape** of reading NFC-loaded
+    `save_variables` from a macro. It's not the actual macro running
+    on any printer in this fleet — adapt to your slicer's start gcode
+    contract, your extruder names, your homing sequence, etc.
+
 ```ini
 [gcode_macro PRINT_START]
 gcode:

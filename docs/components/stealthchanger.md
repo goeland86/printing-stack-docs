@@ -10,7 +10,7 @@ Klipper extra.
 |---|---|
 | **Platform** | Voron 2.4 |
 | **Toolboard** | RP2040-based, one per tool |
-| **Host** | Recore A7 (Linux) |
+| **Host** | [Recore A7](recore.md) |
 | **Toolchanger plugin** | [viesturz/klipper-toolchanger](https://github.com/viesturz/klipper-toolchanger) (upstream, unmodified) |
 | **NFC reader** | One PN532 (USB-UART) shared across all 5 tools, scanned spools assigned via [multi-tool prompt](../workflows/nfc-spool.md) |
 
@@ -73,25 +73,22 @@ flowchart TB
 
 When a spool is scanned, the NFC daemon writes the spool's
 `pressure_advance` from Spoolman into `nfc_t{N}_pressure_advance`. The
-print-start macro applies it:
+print-start macro applies it — for the actual macro pattern used in
+this fleet see [save_variables → reading from macros](../reference/save-variables.md#reading-from-macros).
 
-```ini
-[gcode_macro PRINT_START]
-gcode:
-    {% set svv = printer.save_variables.variables %}
-    {% for t in range(5) %}
-        {% set pa = svv["nfc_t" + t|string + "_pressure_advance"]|default(0.04)|float %}
-        SET_PRESSURE_ADVANCE EXTRUDER=extruder{% if t > 0 %}{{ t }}{% endif %} ADVANCE={pa}
-    {% endfor %}
-```
+!!! note "Macro snippets in these docs are illustrative"
+    Print-start / toolchange snippets shown across this site are
+    **examples**, not ready-to-run macros. Adapt them to your
+    printer's configuration (extruder names, tool count, slicer's
+    start gcode contract, etc.) before pasting into `printer.cfg`.
 
-Spoolman's per-spool `extra.pressure_advance` field stores the value;
-the daemon copies it over on every scan so a freshly tuned PA in
-Spoolman propagates the moment that spool is loaded.
+Spoolman's per-spool nozzle-specific pressure-advance extra (e.g.
+`nozzle_0_4_pressure_advance`) stores the value; the daemon copies it
+to `save_variables` on every scan so a freshly tuned PA in Spoolman
+propagates the moment that spool is loaded.
 
-## Recore A7 specifics
+## Host: Recore A7
 
-The Recore is an A7 (Cortex-A7) Klipper host with onboard stepper
-drivers. It runs Klipper natively, no Pi required. From the fleet's
-perspective it's just "the Voron's host" — Mainsail, Moonraker, NFC
-daemon, and Spoolman client all live on it.
+See [Recore (A6/A7/A8)](recore.md) — short answer is "Linux SBC with
+onboard stepper drivers; runs Klipper natively." Board-specific docs
+live on the [iAgent wiki](https://www.iagent.no).

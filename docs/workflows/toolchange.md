@@ -33,7 +33,13 @@ this site doesn't try to re-document it.
 ## Where NFC metadata enters
 
 Both pre- and post-change hooks read from `save_variables` so per-tool
-filament settings travel with the toolchange:
+filament settings travel with the toolchange.
+
+!!! info "The snippets below are examples"
+    They illustrate the **pattern**, not a drop-in macro. Real macros
+    in this fleet have additional concerns (homing checks, extruder
+    naming conventions, slicer hand-off, error recovery) that aren't
+    shown here. Adapt to your own `printer.cfg`.
 
 ```ini
 [gcode_macro POST_TOOL_CHANGE]
