@@ -8,7 +8,7 @@ drivers — no separate Pi + control board needed.
 |---|---|
 | **Vendor** | iAgent |
 | **Docs / wiki** | <https://www.iagent.no> |
-| **Variants used in this fleet** | A6 (Voron V0), A7 (Voron 2.4 / StealthChanger), A8 (Voron Trident 300) |
+| **Variants used in this fleet** | A6 (Voron V0), A7 (Voron 2.4 / StealthChanger), A8 (Voron Trident 300, CR-30) |
 
 ## What's important here
 
@@ -36,7 +36,15 @@ wiki](https://www.iagent.no)** — they own that documentation.
 |--------|---------|------------------|
 | A6 | Voron V0 | Smallest footprint, matches V0's compact build |
 | A7 | Voron 2.4 (StealthChanger) | Adequate driver count + headroom for 5 toolheads + host load |
-| A8 | Voron Trident 300 | Larger motor / current envelope suits the Trident |
+| A8 | Voron Trident 300, CR-30 (Klipper mod) | Larger motor / current envelope |
 
 If you're picking a board for a new printer, the iAgent wiki has the
 current selection guide — that's the canonical source.
+
+## Not running a Recore?
+
+Nothing in this docs site is Recore-specific. The NFC daemon, the
+bridge, and every macro pattern documented here run unchanged on a
+Raspberry Pi, BTT CB1 / Pi 4-equivalent carrier, or any other Klipper
+host. The Recore is just the reference fleet's choice — substitute
+freely.

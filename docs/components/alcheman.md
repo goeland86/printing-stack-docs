@@ -8,10 +8,18 @@ running unmodified Klipper and the same NFC integration as the
 | | |
 |---|---|
 | **Vendor** | Elyarchi |
+| **Host** | Proprietary Elyarchi controller — ships with Klipper + Fluidd preinstalled out of the box |
 | **Firmware** | Klipper (upstream) |
 | **NFC reader** | PN532 on USB-UART |
 | **NFC mode** | `single` |
-| **Frontend** | Mainsail (vanilla) |
+| **Frontend** | Fluidd (vendor default) — Mainsail also works |
+
+## What's specific to the Alcheman
+
+The Alcheman ships with Klipper + Fluidd preinstalled on its
+proprietary controller — no host swap or fresh install needed. The NFC
+daemon drops in alongside the vendor's existing config; Fluidd renders
+the prompt dialog just like Mainsail does.
 
 ## Stack integration
 

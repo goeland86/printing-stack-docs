@@ -1,8 +1,11 @@
 # Hardware bill of materials
 
-The hardware actually deployed in this fleet. Not a buying guide — a
-truthful inventory so other operators can match it (or substitute
-deliberately).
+The hardware actually deployed in the **reference fleet** — the
+printers this stack is developed and tested against. Not a buying
+guide, and not a requirement list: every controller below can be
+substituted with a Raspberry Pi, a BTT Pi-equivalent, or any other
+Klipper-capable host. The stack itself doesn't depend on any specific
+controller family.
 
 ## Voron 2.4 (StealthChanger)
 
@@ -37,15 +40,15 @@ deliberately).
 | Component | Make / Model | Notes |
 |-----------|--------------|-------|
 | **Base printer** | Creality CR-30 ("PrintMill") | Belt printer, converted to Klipper |
-| **Klipper controller** | Operator's choice of MCU | Any Klipper-supported board |
+| **Host (reference)** | [Recore A8](../components/recore.md) | Same board as the Trident; any Klipper-capable controller (RPi, BTT-equivalent) substitutes cleanly |
 | **NFC reader** | PN532 on USB-UART | Single reader |
 
 ## Elyarchi Alcheman
 
 | Component | Make / Model | Notes |
 |-----------|--------------|-------|
-| **Printer** | Elyarchi Alcheman | Stock chassis, running upstream Klipper |
-| **Klipper controller** | Per Elyarchi spec | Operator-managed |
+| **Printer** | Elyarchi Alcheman | Proprietary chassis + controller |
+| **Host** | Vendor controller, ships with Klipper + Fluidd preinstalled | No host swap needed; the NFC daemon installs alongside the vendor's existing config |
 | **NFC reader** | PN532 on USB-UART | Single reader |
 
 ## Snapmaker J1S

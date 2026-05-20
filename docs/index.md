@@ -14,20 +14,32 @@ some written from scratch — fit together. If you've landed here trying
 to figure out **"do I need this repo, that branch, and that env var?"**,
 start with [Architecture → Fleet overview](architecture/overview.md).
 
-## The fleet
+## The reference fleet
 
-| Printer | Host | Firmware | Notes |
-|---------|------|----------|-------|
+The printers below are the ones this stack is **developed and tested
+against**. They're not a requirement — the stack works on any Klipper
+host (RPi, BTT CB1/Pi 4 carriers, generic Linux SBCs) plus the J1S
+bridge. The reference fleet just happens to be what's available for
+end-to-end testing.
+
+| Printer | Host (reference) | Firmware | Notes |
+|---------|------------------|----------|-------|
 | **Voron 2.4 (StealthChanger)** | [Recore A7](components/recore.md) | Klipper + [`klipper-toolchanger`](https://github.com/viesturz/klipper-toolchanger) | 5 toolheads on RP2040 toolboards |
 | **Voron Trident 300** | [Recore A8](components/recore.md) | Klipper | Single-tool, NFC-equipped |
 | **Voron V0** | [Recore A6](components/recore.md) | Klipper | Small single-tool, NFC-equipped |
-| **CR-30 (Klipper modded)** | (operator's host of choice) | Klipper | Belt printer, NFC-equipped |
-| **Elyarchi Alcheman** | (operator's host of choice) | Klipper | NFC-equipped |
+| **CR-30 (Klipper modded)** | [Recore A8](components/recore.md) | Klipper | Belt printer, NFC-equipped |
+| **Elyarchi Alcheman** | Proprietary controller (ships with Klipper + Fluidd preinstalled) | Klipper | NFC-equipped |
 | **Snapmaker J1S** | RPi 3 (custom image) | Snapmaker stock + [`snapmaker_moonraker`](https://github.com/goeland86/snapmaker_moonraker) bridge | Closed firmware, bridged to Mainsail |
 
 Every printer in the fleet runs a [PN532 NFC reader on a USB-UART
 cable](how-to/install-nfc-daemon.md) and the [klipper-nfc-daemon](components/nfc-daemon.md),
 sharing a single [Spoolman](components/spoolman-nfc.md) instance.
+
+!!! note "The stack is controller-agnostic"
+    Nothing in `klipper-nfc-daemon`, `snapmaker_moonraker`, or the
+    Spoolman NFC fork is specific to any of the controllers above.
+    Swap a Recore for a Raspberry Pi, a BTT Pi-equivalent, or any
+    other Klipper-capable host and the workflow is identical.
 
 ## What's documented here
 
